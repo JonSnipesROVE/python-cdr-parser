@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 ##############################
-## Jon Snipes               ##
+## Jon Snipes   |   ROVE    ##
 ## Parse CDR via CSV export ##
 ##############################
 
@@ -20,7 +20,7 @@ import sqlite3 as db
 def parse_arguments():
   ## Parge Command Line Arguments
   parser = argparse.ArgumentParser(description='What to do from here:')
-  parser.add_argument("-d", action='store_true',default=False, help="Enable AXL Debuging")
+  parser.add_argument("-d", action='store_true',default=False, help="Enable Debuging")
   parser.add_argument("-f", default=None, help="CDR File Location")
   parser.add_argument("-db", default=None, help="CDR DB Location")
 
@@ -68,29 +68,32 @@ def sql_query(sql,delimiter = "tab"):
 		else:
 			if re.match("select",sql):
 				rows = cur.fetchall()
-				for row in rows:
-					header = ""
-					for col in dict(row):
-						if delimiter == "tab":
-							header = header + '{:24.24}'.format(col) + "  "
-						else:
-							if header == "":
-								header = col
+				if len(rows) == 0:
+					print("no results")
+				else:
+					for row in rows:
+						header = ""
+						for col in dict(row):
+							if delimiter == "tab":
+								header = header + '{:24.24}'.format(col) + "  "
 							else:
-								header = header + "," + col
-					break
-				print(header)
-				for row in rows:
-					rowData = ""
-					for cell in row:
-						if delimiter == "tab":
-							rowData = rowData + '{:24.24}'.format(str(cell)) + "  "
-						else:
-							if rowData == "":
-								rowData = cell
+								if header == "":
+									header = col
+								else:
+									header = header + "," + col
+						break
+					print(header)
+					for row in rows:
+						rowData = ""
+						for cell in row:
+							if delimiter == "tab":
+								rowData = rowData + '{:24.24}'.format(str(cell)) + "  "
 							else:
-								rowData = rowData + "," + cell
-					print(rowData)
+								if rowData == "":
+									rowData = cell
+								else:
+									rowData = rowData + "," + cell
+						print(rowData)
 
 			else:
 				print("Only supports select statements for now.")
